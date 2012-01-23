@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -38,7 +41,9 @@ public class DebugLog {
         try {
             this.fh = new FileHandler(file, true);
             this.log.setUseParentHandlers(false);
-            for (Handler handler : this.log.getHandlers()) {
+            List<Handler> handlerList = new ArrayList<Handler>();
+            handlerList.addAll(Arrays.asList(this.log.getHandlers()));
+            for (Handler handler : handlerList) {
                 this.log.removeHandler(handler);
             }
             this.log.addHandler(this.fh);
