@@ -246,4 +246,21 @@ public class PermissionTools {
             return true;
         }
     }
+
+    /**
+     * Checks to see if a player should bypass allow-flight restrictions.
+     *
+     * @param toWorld world travelling to.
+     * @param teleportee player travelling.
+     * @return True if they should bypass restrictions
+     */
+    public boolean playerCanIgnoreAllowFlightRestriction(MultiverseWorld toWorld, Player teleportee) {
+        if (toWorld != null) {
+            return this.plugin.getMVPerms().canIgnoreAllowFlightRestriction(teleportee, toWorld);
+        } else {
+            // TODO: Determine if this value is false because a world didn't exist
+            // or if it was because a world wasn't imported.
+            return true;
+        }
+    }
 }

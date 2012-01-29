@@ -300,7 +300,7 @@ public class MVPlayerListener implements Listener {
      */
     public void handleGameMode(final Player player, final MultiverseWorld world) {
         // We perform this task one tick later to MAKE SURE that the player actually reaches the
-        // destination world, otherwise we'd be changing the player mode if they havent moved anywhere.
+        // destination world, otherwise we'd be changing the player mode if they haven't moved anywhere.
         if (!this.pt.playerCanIgnoreGameModeRestriction(world, player)) {
             this.plugin.log(Level.FINE, "Handeling gamemode for player: " + player.getName());
             this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin,
@@ -308,9 +308,6 @@ public class MVPlayerListener implements Listener {
                     public void run() {
                         // Check that the player is in the new world and they haven't been teleported elsewhere or the event cancelled.
                         if (player.getWorld() == world.getCBWorld()) {
-                            MultiverseCore.staticLog(Level.FINE, "Handling gamemode for player: " + player.getName() + ", " + world.getGameMode().toString());
-                            MultiverseCore.staticLog(Level.FINE, "PWorld: " + player.getWorld());
-                            MultiverseCore.staticLog(Level.FINE, "AWorld: " + world);
                             player.setGameMode(world.getGameMode());
                         } else {
                             MultiverseCore.staticLog(Level.FINE,
@@ -321,6 +318,34 @@ public class MVPlayerListener implements Listener {
                 }, 1L);
         } else {
             this.plugin.log(Level.FINE, "Player: " + player.getName() + " is IMMUNE to gamemode changes!");
+        }
+    }
+
+    /**
+     * Handles the allowflight attribute for the specified {@link Player}.
+     * @param player The {@link Player}.
+     * @param world The world the player is in.
+     */
+    public void handleAllowFlight(final Player player, final MultiverseWorld world) {
+        // We perform this task one tick later to MAKE SURE that the player actually reaches the
+        // destination world, otherwise we'd be changing the player mode if they haven't moved anywhere.
+        if (!this.pt.playerCanIgnoreAllowFlightRestriction(world, player)) {
+            this.plugin.log(Level.FINE, "Handeling flight for player: " + player.getName());
+            this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin,
+                new Runnable() {
+                    public void run() {
+                        // Check that the player is in the new world and they haven't been teleported elsewhere or the event cancelled.
+                        if (player.getWorld() == world.getCBWorld()) {
+                            player.setAllowFlight(world.isFlightAllowed());
+                        } else {
+                            MultiverseCore.staticLog(Level.FINE,
+                                    String.format("The gamemode was NOT changed for player '%s' because he is now in world '%s' instead of world '%s'",
+                                    player.getName(), player.getWorld().getName(), world.getName()));
+                        }
+                    }
+                }, 1L);
+        } else {
+            this.plugin.log(Level.FINE, "Player: " + player.getName() + " is IMMUNE to flight changes!");
         }
     }
 }

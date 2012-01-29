@@ -588,4 +588,25 @@ public interface MultiverseWorld {
      * @return The type of portals that are allowed.
      */
     AllowedPortalType getAllowedPortals();
+
+    /**
+     * Gets whether or not flight is allowed in this world.
+     * <p>
+     * It should be noted that this refers to clientside flying. Creative
+     * mode will always allow server based flying.
+     *
+     * @return True if flight is allowed.
+     */
+    boolean isFlightAllowed();
+
+    /**
+     * Sets whether or not flight is allowed in this world.
+     * <p>
+     * It should be noted that this refers to clientside flying. Creative
+     * mode will always allow server based flying.
+     *
+     * @param flightAllowed Wheter or not flight is allowed in this world.
+     */
+    void setFlightAllowed(boolean flightAllowed);
+
 }

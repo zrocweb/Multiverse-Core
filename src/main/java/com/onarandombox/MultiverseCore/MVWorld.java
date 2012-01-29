@@ -171,6 +171,9 @@ public class MVWorld implements MultiverseWorld {
                 "There is no help available for this variable. Go bug Rigby90 about it.", "setActualKeepSpawnInMemory"));
         this.propertyList.put("autoload", fac.getNewProperty("autoload", true,
                 "Set this to false ONLY if you don't want this world to load itself on server restart."));
+        this.propertyList.put("allowflight", fac.getNewProperty("allowflight", false,
+                "Set this to false ONLY if you don't want this world to load itself on server restart.",
+                "setActualAllowFlight"));
         this.propertyList.put("bedrespawn", fac.getNewProperty("bedrespawn", true, "If a player dies in this world, shoudld they go to their bed?"));
         this.propertyList.put("time", fac.getNewProperty("time", "", "Set the time to whatever you want! (Will NOT freeze time)", "setActualTime", true));
         this.getKnownProperty("spawn", Location.class).setValue(this.readSpawnFromConfig(this.getCBWorld()));
@@ -218,7 +221,18 @@ public class MVWorld implements MultiverseWorld {
         this.setActualDifficulty();
         this.setActualGameMode();
         this.setActualSpawn();
+        this.setActualAllowFlight();
         this.syncMobs();
+    }
+
+    private boolean setActualAllowFlight() {
+        for (Player p : this.plugin.getServer().getWorld(this.getName()).getPlayers()) {
+            this.plugin.log(Level.FINER, String.format("Changing %s's permission to fly in %s to %s",
+                    p.getName(), this.getKnownProperty("allowflight", GameMode.class).getValue().toString(),
+                    this.getAlias()));
+            this.plugin.getPlayerListener().handleAllowFlight(p, this);
+        }
+        return true;
     }
 
     /**
@@ -896,10 +910,6 @@ public class MVWorld implements MultiverseWorld {
     /**
      * Sets the actual gamemode by iterating through players.
      *
-     * gameMode is not used, but it's in the reflection template.
-     *
-     * Needs a bit o' refactoring.
-     *
      * @return True if the gamemodes of players were set successfully. (always)
      */
     public boolean setActualGameMode() {
@@ -1180,6 +1190,22 @@ public class MVWorld implements MultiverseWorld {
     @Override
     public AllowedPortalType getAllowedPortals() {
         return this.getKnownProperty("portalform", AllowedPortalType.class).getValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isFlightAllowed() {
+        return this.getKnownProperty("flightallowed", Boolean.class).getValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFlightAllowed(boolean flightAllowed) {
+        this.setKnownProperty("flightallowed", Boolean.toString(flightAllowed), null);
     }
 
     /**
