@@ -70,7 +70,7 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
 
     private AnchorManager anchorManager = new AnchorManager(this);
     // TODO please let's make this non-static
-    private static MultiverseCoreConfiguration config;
+    private MultiverseCoreConfiguration config;
 
     /**
      * This method is used to find out who is teleporting a player.
@@ -159,7 +159,7 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
     private AllPay banker;
     private int pluginCount;
     private DestinationFactory destFactory;
-    private SpoutInterface spoutInterface = null;
+    //private SpoutInterface spoutInterface = null;
     private MultiverseMessaging messaging;
     private BlockSafety blockSafety;
     private LocationManipulation locationManipulation;
@@ -253,11 +253,13 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
             // A test that had no worlds loaded was being run. This should never happen in production
         }
         this.saveMVConfig();
+        /*
         // Check to see if spout was already loaded (most likely):
         if (this.getServer().getPluginManager().getPlugin("Spout") != null) {
             this.setSpout();
             this.log(Level.INFO, "Spout integration enabled.");
         }
+        */
     }
 
     private void initializeDestinationFactory() {
@@ -489,13 +491,13 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
      * @param msg The message to log.
      */
     public static void staticLog(Level level, String msg) {
-        if (level == Level.FINE && config.getGlobalDebug() >= 1) {
+        if (level == Level.FINE && MultiverseCoreConfiguration.getInstance().getGlobalDebug() >= 1) {
             staticDebugLog(Level.INFO, msg);
             return;
-        } else if (level == Level.FINER && config.getGlobalDebug() >= 2) {
+        } else if (level == Level.FINER && MultiverseCoreConfiguration.getInstance().getGlobalDebug() >= 2) {
             staticDebugLog(Level.INFO, msg);
             return;
-        } else if (level == Level.FINEST && config.getGlobalDebug() >= 3) {
+        } else if (level == Level.FINEST && MultiverseCoreConfiguration.getInstance().getGlobalDebug() >= 3) {
             staticDebugLog(Level.INFO, msg);
             return;
         } else if (level != Level.FINE && level != Level.FINER && level != Level.FINEST) {
@@ -522,7 +524,7 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
     @Override
     public String getAuthors() {
         String authors = "";
-        ArrayList<String> auths = this.getDescription().getAuthors();
+        List<String> auths = this.getDescription().getAuthors();
         if (auths.size() == 0) {
             return "";
         }
@@ -662,9 +664,10 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
         this.serverFolder = newServerFolder;
     }
 
+    /*
     /**
      * Initializes Spout.
-     */
+     * /
     public void setSpout() {
         this.spoutInterface = new SpoutInterface();
         this.commandHandler.registerCommand(new SpoutCommand(this));
@@ -674,10 +677,11 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
      * Gets our {@link SpoutInterface}.
      *
      * @return The {@link SpoutInterface} we're using.
-     */
+     * /
     public SpoutInterface getSpout() {
         return this.spoutInterface;
     }
+    */
 
     /**
      * {@inheritDoc}
@@ -864,6 +868,6 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
      */
     @Deprecated
     public static MultiverseCoreConfiguration getStaticConfig() {
-        return config;
+        return MultiverseCoreConfiguration.getInstance();
     }
 }

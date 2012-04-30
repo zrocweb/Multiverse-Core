@@ -69,7 +69,7 @@ public class WorldManager implements MVWorldManager {
                 return s.equalsIgnoreCase("bukkit.yml");
             }
         });
-        if (files.length == 1) {
+        if (files != null && files.length == 1) {
             FileConfiguration bukkitConfig = YamlConfiguration.loadConfiguration(files[0]);
             if (bukkitConfig.isConfigurationSection("worlds")) {
                 Set<String> keys = bukkitConfig.getConfigurationSection("worlds").getKeys(false);
@@ -77,6 +77,8 @@ public class WorldManager implements MVWorldManager {
                     defaultGens.put(key, bukkitConfig.getString("worlds." + key + ".generator", ""));
                 }
             }
+        } else {
+            this.plugin.log(Level.WARNING, "Could not read 'bukkit.yml'. Any Default worldgenerators will not be loaded!");
         }
     }
 
@@ -153,18 +155,6 @@ public class WorldManager implements MVWorldManager {
             this.unloadedWorlds.remove(name);
         }
         return true;
-    }
-
-    /**
-     * Verifies that a given Plugin generator string exists.
-     *
-     * @param generator The name of the generator plugin. This should be something like CleanRoomGenerator.
-     * @return True if the plugin exists and is enabled, false if not.
-     */
-    // TODO maybe remove this since it's unused?
-    private boolean pluginExists(String generator) {
-        Plugin myPlugin = this.plugin.getServer().getPluginManager().getPlugin(generator);
-        return myPlugin != null && myPlugin.isEnabled();
     }
 
     /**
