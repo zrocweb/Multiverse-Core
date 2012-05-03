@@ -366,9 +366,12 @@ public class MVPlayerListener implements Listener {
                         // Check that the player is in the new world and they haven't been teleported elsewhere or the event cancelled.
                         if (player.getWorld() == world.getCBWorld()) {
                             player.setAllowFlight(world.isFlightAllowed());
+                            MultiverseCore.staticLog(Level.FINER,
+                                    String.format("%s's allowFlight was set to %b!",
+                                            player.getName(), world.isFlightAllowed()));
                         } else {
                             MultiverseCore.staticLog(Level.FINE,
-                                    String.format("The gamemode was NOT changed for player '%s' because he is now in world '%s' instead of world '%s'",
+                                    String.format("allowFlight was NOT changed for player '%s' because he is now in world '%s' instead of world '%s'",
                                     player.getName(), player.getWorld().getName(), world.getName()));
                         }
                     }

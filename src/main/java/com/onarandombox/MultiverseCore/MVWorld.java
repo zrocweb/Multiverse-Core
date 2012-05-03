@@ -654,6 +654,7 @@ public class MVWorld extends SerializationConfig implements MultiverseWorld {
         this.bedRespawn = true;
         this.worldBlacklist = new ArrayList<String>();
         this.generator = null;
+        this.allowFlight = true;
     }
 
     /**
