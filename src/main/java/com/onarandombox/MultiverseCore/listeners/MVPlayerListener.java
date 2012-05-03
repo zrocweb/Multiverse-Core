@@ -299,6 +299,7 @@ public class MVPlayerListener implements Listener {
         // Remove the player 1 tick after the login. I'm sure there's GOT to be a better way to do this...
         this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin,
             new Runnable() {
+                @Override
                 public void run() {
                     player.teleport(plugin.getMVWorldManager().getFirstSpawnWorld().getSpawnLocation());
                 }
@@ -329,6 +330,7 @@ public class MVPlayerListener implements Listener {
             this.plugin.log(Level.FINE, "Handeling gamemode for player: " + player.getName());
             this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin,
                 new Runnable() {
+                    @Override
                     public void run() {
                         // Check that the player is in the new world and they haven't been teleported elsewhere or the event cancelled.
                         if (player.getWorld() == world.getCBWorld()) {
@@ -359,6 +361,7 @@ public class MVPlayerListener implements Listener {
             this.plugin.log(Level.FINE, "Handeling flight for player: " + player.getName());
             this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin,
                 new Runnable() {
+                    @Override
                     public void run() {
                         // Check that the player is in the new world and they haven't been teleported elsewhere or the event cancelled.
                         if (player.getWorld() == world.getCBWorld()) {
