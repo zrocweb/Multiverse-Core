@@ -14,6 +14,7 @@ import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import com.onarandombox.MultiverseCore.api.SafeTTeleporter;
 import com.onarandombox.MultiverseCore.api.WorldPurger;
 import com.onarandombox.MultiverseCore.event.MVWorldDeleteEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
@@ -288,13 +289,15 @@ public class WorldManager implements MVWorldManager {
         if (worlds.containsKey(worldName))
             throw new IllegalArgumentException("That world is already loaded!");
         MVWorld mvworld = worldsFromTheConfig.get(worldName);
-        World cbworld;
-        try {
-            cbworld = creator.createWorld();
-        } catch (Exception e) {
-            e.printStackTrace();
-            brokenWorld(worldName);
-            return false;
+        World cbworld = Bukkit.getWorld(worldName);
+        if (cbworld == null) {
+            try {
+                cbworld = creator.createWorld();
+            } catch (Exception e) {
+                e.printStackTrace();
+                brokenWorld(worldName);
+                return false;
+            }
         }
         mvworld.init(cbworld, plugin);
         this.worldPurger.purgeWorld(mvworld);
