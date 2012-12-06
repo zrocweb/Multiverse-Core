@@ -37,17 +37,6 @@ public class MVPermissions implements PermissionsInterface {
     }
 
     /**
-     * Check if a Player can ignore GameMode restrictions for world they travel to.
-     *
-     * @param p The {@link Player} to check.
-     * @param w The {@link MultiverseWorld} the player wants to teleport to.
-     * @return True if they should bypass restrictions.
-     */
-    public boolean canIgnoreGameModeRestriction(Player p, MultiverseWorld w) {
-        return p.hasPermission("mv.bypass.gamemode." + w.getName());
-    }
-
-    /**
      * Check if a Player can teleport to the Destination world from there current world.
      *
      * @param p The {@link Player} to check.
@@ -103,7 +92,7 @@ public class MVPermissions implements PermissionsInterface {
             this.plugin.log(Level.FINEST, "EnforceAccess is OFF. Player was allowed in " + w.getAlias());
             return true;
         }
-        return this.hasPermission(p, "multiverse.access." + w.getName(), false);
+        return Permissions.ACCESS.hasPermission(p, w.getName());
     }
 
     private boolean canEnterLocation(Player p, Location l) {
@@ -114,7 +103,7 @@ public class MVPermissions implements PermissionsInterface {
         if (!this.plugin.getMVWorldManager().isMVWorld(worldName)) {
             return false;
         }
-        return this.hasPermission(p, "multiverse.access." + worldName, false);
+        return Permissions.ACCESS.hasPermission(p, worldName);
     }
 
     /**
@@ -141,7 +130,7 @@ public class MVPermissions implements PermissionsInterface {
         if (!canEnterLocation(p, d.getLocation(p))) {
             return false;
         }
-        return this.hasPermission(p, d.getRequiredPermission(), false);
+        return d.hasRequiredPermission(p);
     }
 
     /**
@@ -177,14 +166,14 @@ public class MVPermissions implements PermissionsInterface {
                     ChatColor.DARK_AQUA, ChatColor.WHITE));
             cango = false;
         }
-        if (!this.hasPermission(p, "multiverse.access." + worldName, false)) {
+        if (!Permissions.ACCESS.hasPermission(p, worldName)) {
             asker.sendMessage(String.format("The player (%s%s%s) does not have the required world entry permission (%s%s%s) to go to the destination (%s%s%s).",
                     ChatColor.AQUA, p.getDisplayName(), ChatColor.WHITE,
-                    ChatColor.GREEN, "multiverse.access." + worldName, ChatColor.WHITE,
+                    ChatColor.GREEN, Permissions.ACCESS.getName(worldName), ChatColor.WHITE,
                     ChatColor.DARK_AQUA, d.getName(), ChatColor.WHITE));
             cango = false;
         }
-        if (!this.hasPermission(p, d.getRequiredPermission(), false)) {
+        if (d.hasRequiredPermission(p)) {
             asker.sendMessage(String.format("The player (%s%s%s) does not have the required entry permission (%s%s%s) to go to the destination (%s%s%s).",
                     ChatColor.AQUA, p.getDisplayName(), ChatColor.WHITE,
                     ChatColor.GREEN, d.getRequiredPermission(), ChatColor.WHITE,

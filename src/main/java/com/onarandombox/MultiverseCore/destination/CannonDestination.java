@@ -9,8 +9,10 @@ package com.onarandombox.MultiverseCore.destination;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MVDestination;
+import com.onarandombox.MultiverseCore.utils.Permissions;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -205,7 +207,15 @@ public class CannonDestination implements MVDestination {
      */
     @Override
     public String getRequiredPermission() {
-        return "multiverse.access." + this.location.getWorld().getName();
+        return Permissions.ACCESS.getName(this.location.getWorld().getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasRequiredPermission(Permissible permissible) {
+        return Permissions.ACCESS.hasPermission(permissible, this.location.getWorld().getName());
     }
 
     /**

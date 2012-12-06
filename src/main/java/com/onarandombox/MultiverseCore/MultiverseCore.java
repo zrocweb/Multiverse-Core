@@ -8,6 +8,7 @@
 package com.onarandombox.MultiverseCore;
 
 import buscript.Buscript;
+import com.dumptruckman.minecraft.pluginbase.permission.BukkitPermFactory;
 import com.dumptruckman.minecraft.util.Logging;
 import com.fernferret.allpay.AllPay;
 import com.fernferret.allpay.GenericBank;
@@ -223,6 +224,9 @@ public class MultiverseCore extends JavaPlugin implements MVPlugin, Core {
 
     @Override
     public void onLoad() {
+        // Register permission handler
+        BukkitPermFactory.registerPermissionName(getClass(), "multiverse");
+        BukkitPermFactory.registerPermissionName(Core.class, "multiverse");
         // Register our config
         SerializationConfig.registerAll(MultiverseCoreConfiguration.class);
         // Register our world

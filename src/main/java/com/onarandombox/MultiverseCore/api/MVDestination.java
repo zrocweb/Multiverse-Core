@@ -9,6 +9,7 @@ package com.onarandombox.MultiverseCore.api;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -129,6 +130,14 @@ public interface MVDestination {
      * @return the permissions string required to go here.
      */
     String getRequiredPermission();
+
+    /**
+     * Checks whether the given permissible has the permission to go to this destination.
+     *
+     * @param permissible Whoever we need to check permissions for.
+     * @return True if they are allowed to go to this destination based on permissions.
+     */
+    boolean hasRequiredPermission(Permissible permissible);
 
     /**
      * Should the Multiverse SafeTeleporter be used?

@@ -9,6 +9,7 @@ package com.onarandombox.MultiverseCore.commands;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import com.onarandombox.MultiverseCore.utils.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.World.Environment;
 import org.bukkit.command.CommandSender;
@@ -65,7 +66,7 @@ public class ListCommand extends PaginatedCoreCommand<String> {
             }
         }
         for (String name : this.plugin.getMVWorldManager().getUnloadedWorlds()) {
-            if (p == null || this.plugin.getMVPerms().hasPermission(p, "multiverse.access." + name, true)) {
+            if (p == null || Permissions.ACCESS.hasPermission(p, name)) {
                 worldList.add(ChatColor.GRAY + name + " - UNLOADED");
             }
         }

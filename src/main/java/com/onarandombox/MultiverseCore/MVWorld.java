@@ -16,6 +16,7 @@ import com.onarandombox.MultiverseCore.configuration.WorldPropertyValidator;
 import com.onarandombox.MultiverseCore.enums.AllowedPortalType;
 import com.onarandombox.MultiverseCore.enums.EnglishChatColor;
 import com.onarandombox.MultiverseCore.exceptions.PropertyDoesNotExistException;
+import com.onarandombox.MultiverseCore.utils.Permissions;
 import me.main__.util.SerializationConfig.ChangeDeniedException;
 import me.main__.util.SerializationConfig.NoSuchPropertyException;
 import me.main__.util.SerializationConfig.VirtualProperty;
@@ -30,7 +31,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONObject;
 
@@ -83,8 +83,6 @@ public class MVWorld implements MultiverseWorld {
 
         this.props.environment = world.getEnvironment();
         this.props.seed = world.getSeed();
-
-        this.initPerms();
 
         this.props.flushChanges();
 
@@ -322,10 +320,7 @@ public class MVWorld implements MultiverseWorld {
         }
     }
 
-    private Permission permission;
     private Permission exempt;
-    private Permission ignoreperm;
-    private Permission limitbypassperm;
 
     /**
      * Null-location.
@@ -371,37 +366,6 @@ public class MVWorld implements MultiverseWorld {
         };
     }
 
-    /**
-     * Initializes permissions.
-     */
-    private void initPerms() {
-        this.permission = new Permission("multiverse.access." + this.getName(), "Allows access to " + this.getName(), PermissionDefault.OP);
-        // This guy is special. He shouldn't be added to any parent perms.
-        this.ignoreperm = new Permission("mv.bypass.gamemode." + this.getName(),
-                "Allows players with this permission to ignore gamemode changes.", PermissionDefault.FALSE);
-
-        this.exempt = new Permission("multiverse.exempt." + this.getName(),
-                "A player who has this does not pay to enter this world, or use any MV portals in it " + this.getName(), PermissionDefault.OP);
-
-        this.limitbypassperm = new Permission("mv.bypass.playerlimit." + this.getName(),
-                "A player who can enter this world regardless of wether its full", PermissionDefault.OP);
-        try {
-            this.plugin.getServer().getPluginManager().addPermission(this.permission);
-            this.plugin.getServer().getPluginManager().addPermission(this.exempt);
-            this.plugin.getServer().getPluginManager().addPermission(this.ignoreperm);
-            this.plugin.getServer().getPluginManager().addPermission(this.limitbypassperm);
-            // Add the permission and exempt to parents.
-            this.addToUpperLists(this.permission);
-
-            // Add ignore to it's parent:
-            this.ignoreperm.addParent("mv.bypass.gamemode.*", true);
-            // Add limit bypass to it's parent
-            this.limitbypassperm.addParent("mv.bypass.playerlimit.*", true);
-        } catch (IllegalArgumentException e) {
-            this.plugin.log(Level.FINER, "Permissions nodes were already added for " + this.name);
-        }
-    }
-
     private Location readSpawnFromWorld(World w) {
         Location location = w.getSpawnLocation();
         // Set the worldspawn to our configspawn
@@ -442,32 +406,6 @@ public class MVWorld implements MultiverseWorld {
             }
         }
         return location;
-    }
-
-    private void addToUpperLists(Permission perm) {
-        Permission all = this.plugin.getServer().getPluginManager().getPermission("multiverse.*");
-        Permission allWorlds = this.plugin.getServer().getPluginManager().getPermission("multiverse.access.*");
-        Permission allExemption = this.plugin.getServer().getPluginManager().getPermission("multiverse.exempt.*");
-
-        if (allWorlds == null) {
-            allWorlds = new Permission("multiverse.access.*");
-            this.plugin.getServer().getPluginManager().addPermission(allWorlds);
-        }
-        allWorlds.getChildren().put(perm.getName(), true);
-        if (allExemption == null) {
-            allExemption = new Permission("multiverse.exempt.*");
-            this.plugin.getServer().getPluginManager().addPermission(allExemption);
-        }
-        allExemption.getChildren().put(this.exempt.getName(), true);
-        if (all == null) {
-            all = new Permission("multiverse.*");
-            this.plugin.getServer().getPluginManager().addPermission(all);
-        }
-        all.getChildren().put("multiverse.access.*", true);
-        all.getChildren().put("multiverse.exempt.*", true);
-
-        this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(all);
-        this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(allWorlds);
     }
 
     public void copyValues(MVWorld other) {
@@ -916,7 +854,7 @@ public class MVWorld implements MultiverseWorld {
      */
     @Override
     public Permission getAccessPermission() {
-        return this.permission;
+        return Permissions.ACCESS.getPermission(getName());
     }
 
     /**
@@ -956,7 +894,7 @@ public class MVWorld implements MultiverseWorld {
      */
     @Override
     public Permission getExemptPermission() {
-        return this.exempt;
+        return Permissions.COST_EXEMPT.getPermission(getName());
     }
 
     /**

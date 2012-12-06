@@ -11,8 +11,10 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import com.onarandombox.MultiverseCore.api.Core;
 import com.onarandombox.MultiverseCore.api.MVDestination;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import com.onarandombox.MultiverseCore.utils.Permissions;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -149,9 +151,15 @@ public class WorldDestination implements MVDestination {
      */
     @Override
     public String getRequiredPermission() {
-        // TODO: Potenitally replace spaces wiht tabs for friendlier yaml.
-        // this.world.getName().replace(" ","_");
-        return "multiverse.access." + this.world.getName();
+        return Permissions.ACCESS.getName(this.world.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasRequiredPermission(Permissible permissible) {
+        return Permissions.ACCESS.hasPermission(permissible, this.world.getName());
     }
 
     /**

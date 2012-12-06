@@ -27,8 +27,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -614,29 +612,9 @@ public class WorldManager implements MVWorldManager {
         // Basic Counter to count how many Worlds we are loading.
         int count = 0;
         this.ensureConfigIsPrepared();
-        this.ensureSecondNamespaceIsPrepared();
 
         // Force the worlds to be loaded, ie don't just load new worlds.
         if (forceLoad) {
-            // Remove all world permissions.
-            Permission allAccess = this.plugin.getServer().getPluginManager().getPermission("multiverse.access.*");
-            Permission allExempt = this.plugin.getServer().getPluginManager().getPermission("multiverse.exempt.*");
-            for (MultiverseWorld w : this.worlds.values()) {
-                // Remove this world from the master list
-                if (allAccess != null) {
-                    allAccess.getChildren().remove(w.getAccessPermission().getName());
-                }
-                if (allExempt != null) {
-                    allExempt.getChildren().remove(w.getAccessPermission().getName());
-                }
-                this.plugin.getServer().getPluginManager().removePermission(w.getAccessPermission().getName());
-                this.plugin.getServer().getPluginManager().removePermission(w.getExemptPermission().getName());
-                // Special namespace for gamemodes
-                this.plugin.getServer().getPluginManager().removePermission("mv.bypass.gamemode." + w.getName());
-            }
-            // Recalc the all permission
-            this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(allAccess);
-            this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(allExempt);
             this.worlds.clear();
         }
 
@@ -654,14 +632,6 @@ public class WorldManager implements MVWorldManager {
         // Simple Output to the Console to show how many Worlds were loaded.
         Logging.config("%s - World(s) loaded.", count);
         this.saveWorldsConfig();
-    }
-
-    private void ensureSecondNamespaceIsPrepared() {
-        Permission special = this.plugin.getServer().getPluginManager().getPermission("mv.bypass.gamemode.*");
-        if (special == null) {
-            special = new Permission("mv.bypass.gamemode.*", PermissionDefault.FALSE);
-            this.plugin.getServer().getPluginManager().addPermission(special);
-        }
     }
 
     /**

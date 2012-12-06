@@ -185,6 +185,7 @@
                                     <include>com.dumptruckman.minecraft:buscript</include>
                                     <include>org.mcstats:metrics</include>
                                     <include>com.dumptruckman.minecraft:Logging</include>
+                                    <include>com.dumptruckman.minecraft:Permissions-Bukkit</include>
                                     <include>com.fernferret.allpay:AllPay</include>
                                 </includes>
                             </artifactSet>
@@ -212,6 +213,10 @@
                                 <relocation>
                                     <pattern>com.dumptruckman.minecraft.util.Logging</pattern>
                                     <shadedPattern>com.onarandombox.MultiverseCore.utils.CoreLogging</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.dumptruckman.minecraft.pluginbase</pattern>
+                                    <shadedPattern>com.onarandombox.MultiverseCore.pluginbase</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.dumptruckman.minecraft.util.DebugLog</pattern>
@@ -305,6 +310,15 @@
             <scope>compile</scope>
         </dependency>
         <!-- End of Logging Dependency -->
+        <!-- Start of Permissions lib Dependency -->
+        <dependency>
+            <groupId>com.dumptruckman.minecraft</groupId>
+            <artifactId>Permissions-Bukkit</artifactId>
+            <version>1.5-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <!-- End of Permissions lib Dependency -->
         <!-- Start of Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>

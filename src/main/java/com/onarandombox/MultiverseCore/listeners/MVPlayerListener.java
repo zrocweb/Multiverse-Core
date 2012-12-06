@@ -13,6 +13,7 @@ import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import com.onarandombox.MultiverseCore.event.MVRespawnEvent;
 import com.onarandombox.MultiverseCore.utils.PermissionTools;
+import com.onarandombox.MultiverseCore.utils.Permissions;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -120,7 +121,7 @@ public class MVPlayerListener implements Listener {
         } else {
             this.plugin.log(Level.FINER, "Player joined AGAIN!");
             if (this.plugin.getMVConfig().getEnforceAccess() // check this only if we're enforcing access!
-                    && !this.plugin.getMVPerms().hasPermission(p, "multiverse.access." + p.getWorld().getName(), false)) {
+                    && !Permissions.ACCESS.hasPermission(p, p.getWorld().getName())) {
                 p.sendMessage("[MV] - Sorry you can't be in this world anymore!");
                 this.sendPlayerToDefaultWorld(p);
             }
@@ -201,8 +202,8 @@ public class MVPlayerListener implements Listener {
             if (event.isCancelled() && teleporter != null) {
                 this.plugin.log(Level.FINE, "Player '" + teleportee.getName()
                         + "' was DENIED ACCESS to '" + toWorld.getAlias()
-                        + "' because '" + teleporter.getName()
-                        + "' don't have: multiverse.access." + event.getTo().getWorld().getName());
+                        + "' because '" + teleporter.getName() + "' don't have: "
+                        + Permissions.ACCESS.getName(event.getTo().getWorld().getName()));
                 return;
             }
         } else {
@@ -216,11 +217,9 @@ public class MVPlayerListener implements Listener {
             if (toWorld.getCBWorld().getPlayers().size() >= toWorld.getPlayerLimit()) {
                 // Ouch the world is full, lets see if the player can bypass that limitation
                 if (!pt.playerCanBypassPlayerLimit(toWorld, teleporter, teleportee)) {
-                    this.plugin.log(Level.FINE, "Player '" + teleportee.getName()
-                            + "' was DENIED ACCESS to '" + toWorld.getAlias()
-                            + "' because the world is full and '" + teleporter.getName()
-                            + "' doesn't have: mv.bypass.playerlimit." + event.getTo().getWorld().getName());
-                    event.setCancelled(true);
+                    Logging.fine("Player '%s' was DENIED ACCESS to '%s' because the world is full and '%s' doesn't have: %s.%s",
+                            teleportee.getName(), toWorld.getAlias(), teleporter.getName(),
+                            Permissions.BYPASS_PLAYERLIMIT.getName(), event.getTo().getWorld().getName());
                     return;
                 }
             }
@@ -291,9 +290,11 @@ public class MVPlayerListener implements Listener {
         if (plugin.getMVConfig().getEnforceAccess()) {
             event.setCancelled(!pt.playerCanGoFromTo(fromWorld, toWorld, event.getPlayer(), event.getPlayer()));
             if (event.isCancelled()) {
+                //
                 this.plugin.log(Level.FINE, "Player '" + event.getPlayer().getName()
                         + "' was DENIED ACCESS to '" + event.getTo().getWorld().getName()
-                        + "' because they don't have: multiverse.access." + event.getTo().getWorld().getName());
+                        + "' because they don't have: "
+                        + Permissions.ACCESS.getName(event.getTo().getWorld().getName()));
             }
         } else {
             this.plugin.log(Level.FINE, "Player '" + event.getPlayer().getName()
@@ -358,9 +359,11 @@ public class MVPlayerListener implements Listener {
         }
         // TODO need a override permission for this
         if (player.getAllowFlight() && !world.getAllowFlight() && player.getGameMode() != GameMode.CREATIVE) {
-            player.setAllowFlight(false);
-            if (player.isFlying()) {
-                player.setFlying(false);
+            if (!this.pt.playerCanIgnoreAllowFlightRestriction(world, player)) {
+                player.setAllowFlight(false);
+                if (player.isFlying()) {
+                    player.setFlying(false);
+                }
             }
         } else if (world.getAllowFlight()) {
             if (player.getGameMode() == GameMode.CREATIVE) {

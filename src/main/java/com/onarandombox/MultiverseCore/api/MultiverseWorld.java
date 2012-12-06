@@ -245,14 +245,18 @@ public interface MultiverseWorld {
      * Gets the permission required to enter this world.
      *
      * @return The permission required to be exempt from charges to/from this world.
+     * @deprecated Now using {@link com.onarandombox.MultiverseCore.utils.Permissions#ACCESS}.
      */
+    @Deprecated
     Permission getAccessPermission();
 
     /**
      * Gets the permission required to be exempt when entering.
      *
      * @return The permission required to be exempt when entering.
+     * @deprecated Now using {@link com.onarandombox.MultiverseCore.utils.Permissions#COST_EXEMPT}.
      */
+    @Deprecated
     Permission getExemptPermission();
     // end of permission stuff
 

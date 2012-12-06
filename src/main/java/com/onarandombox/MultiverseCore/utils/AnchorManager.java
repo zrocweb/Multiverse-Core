@@ -140,7 +140,7 @@ public class AnchorManager {
             if (ancLoc == null) {
                 continue;
             }
-            if (p.hasPermission("multiverse.access." + ancLoc.getWorld().getName())) {
+            if (Permissions.ACCESS.hasPermission(p, ancLoc.getWorld().getName())) {
                 myAnchors.add(anchor);
             }
         }

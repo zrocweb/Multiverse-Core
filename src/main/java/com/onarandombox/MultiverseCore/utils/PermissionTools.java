@@ -140,7 +140,7 @@ public class PermissionTools {
                 return true;
             }
             // If the player does not have to pay, return now.
-            if (this.plugin.getMVPerms().hasPermission(teleporter, toWorld.getExemptPermission().getName(), true)) {
+            if (Permissions.COST_EXEMPT.hasPermission(teleporter, toWorld.getName())) {
                 return true;
             }
             final boolean usingVault;
@@ -275,8 +275,7 @@ public class PermissionTools {
             return true;
         }
 
-        MVPermissions perms = plugin.getMVPerms();
-        if (perms.hasPermission(teleportee, "mv.bypass.playerlimit." + toWorld.getName(), false)) {
+        if (Permissions.BYPASS_PLAYERLIMIT.hasPermission(teleportee, toWorld.getName())) {
             return true;
         } else {
             teleporter.sendMessage("The world " + toWorld.getColoredWorldString() + " is full");
@@ -293,7 +292,24 @@ public class PermissionTools {
      */
     public boolean playerCanIgnoreGameModeRestriction(MultiverseWorld toWorld, Player teleportee) {
         if (toWorld != null) {
-            return this.plugin.getMVPerms().canIgnoreGameModeRestriction(teleportee, toWorld);
+            return Permissions.BYPASS_GAMEMODE.hasPermission(teleportee, toWorld.getName());
+        } else {
+            // TODO: Determine if this value is false because a world didn't exist
+            // or if it was because a world wasn't imported.
+            return true;
+        }
+    }
+
+    /**
+     * Checks to see if a player should bypass allow flight restrictions.
+     *
+     * @param toWorld world travelling to.
+     * @param teleportee player travelling.
+     * @return True if they should bypass restrictions
+     */
+    public boolean playerCanIgnoreAllowFlightRestriction(MultiverseWorld toWorld, Player teleportee) {
+        if (toWorld != null) {
+            return Permissions.BYPASS_ALLOWFLY.hasPermission(teleportee, toWorld.getName());
         } else {
             // TODO: Determine if this value is false because a world didn't exist
             // or if it was because a world wasn't imported.
